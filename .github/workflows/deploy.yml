@@ -12,13 +12,14 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: github-pages
   cancel-in-progress: true
 
 jobs:
   build:
     name: Build website
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repository
@@ -27,14 +28,24 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: lts/*
+          node-version: 24
           cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Verify npm registry
+        run: npm ping
 
       - name: Install client dependencies
-        run: npm ci --workspace client --include-workspace-root=false --no-audit --no-fund
+        working-directory: client
+        run: npm ci --workspaces=false --no-audit --no-fund --loglevel=verbose
+        env:
+          npm_config_fetch_retries: 2
+          npm_config_fetch_timeout: 60000
+          npm_config_fetch_retry_maxtimeout: 20000
 
       - name: Build client
-        run: npm run build --workspace client
+        working-directory: client
+        run: npm run build
 
       - name: Add React Router fallback
         run: cp client/dist/index.html client/dist/404.html
