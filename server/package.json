@@ -1,0 +1,28 @@
+{
+  "name": "diamond-physique-server",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "cors": "latest",
+    "dotenv": "latest",
+    "express": "^5.2.1",
+    "express-rate-limit": "latest",
+    "helmet": "latest",
+    "nodemailer": "^9.0.3",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/cors": "latest",
+    "@types/express": "latest",
+    "@types/node": "latest",
+    "@types/nodemailer": "latest",
+    "tsx": "latest",
+    "typescript": "^7.0.2"
+  }
+}
