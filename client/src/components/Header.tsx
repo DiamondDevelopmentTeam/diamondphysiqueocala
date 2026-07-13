@@ -22,82 +22,178 @@ function InstagramIcon() {
 }
 
 export function Header() {
-  const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
 
+  const bookingItem = navItems.find(
+    (item) => item.to === '/book-your-session',
+  );
+
+  const primaryNavigation = navItems.filter(
+    (item) => item.to !== '/book-your-session',
+  );
+
   useEffect(() => {
-    setOpen(false);
+    setMenuOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+    document.body.classList.toggle('menu-open', menuOpen);
+
+    return () => {
+      document.body.classList.remove('menu-open');
+    };
+  }, [menuOpen]);
 
   useEffect(() => {
-    document.body.classList.toggle('menu-open', open);
-    return () => document.body.classList.remove('menu-open');
-  }, [open]);
+    const closeMenuOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMenuOpen(false);
+      }
+    };
 
-  const left = navItems.slice(0, 3);
-  const right = navItems.slice(3);
+    window.addEventListener('keydown', closeMenuOnEscape);
 
-  const renderLink = (item: (typeof navItems)[number]) => (
-    <NavLink
-      key={item.to}
-      to={item.to}
-      className={({ isActive }) => `site-nav__link ${isActive ? 'is-active' : ''}`}
-      end={item.to === '/'}
-    >
-      {item.label}
-    </NavLink>
-  );
+    return () => {
+      window.removeEventListener('keydown', closeMenuOnEscape);
+    };
+  }, []);
 
   return (
-    <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
-      <div className="social-strip">
-        <div className="shell social-strip__inner">
-          <a href="https://www.facebook.com/" target="_blank" rel="noreferrer" aria-label="Facebook">
-            <FacebookIcon />
-          </a>
-          <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" aria-label="Instagram">
-            <InstagramIcon />
-          </a>
+    <header className="site-header">
+      <div className="header-accent" />
+
+      <div className="header-utility">
+        <div className="shell header-utility__inner">
+          <p>Private Personal Training in Ocala, Florida</p>
+
+          <div className="header-socials">
+            <a
+              href="https://www.facebook.com/"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Visit Diamond Physique Ocala on Facebook"
+            >
+              <FacebookIcon />
+            </a>
+
+            <a
+              href="https://www.instagram.com/"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Visit Diamond Physique Ocala on Instagram"
+            >
+              <InstagramIcon />
+            </a>
+          </div>
         </div>
       </div>
 
       <div className="header-main">
-        <div className="shell header-main__inner">
-          <nav className="site-nav site-nav--left" aria-label="Primary navigation">
-            {left.map(renderLink)}
+        <div className="shell header-layout">
+          <Brand className="header-logo" />
+
+          <nav className="desktop-navigation" aria-label="Primary navigation">
+            {primaryNavigation.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === '/'}
+                className={({ isActive }) =>
+                  `desktop-navigation__link ${
+                    isActive ? 'is-active' : ''
+                  }`
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
           </nav>
 
-          <Brand className="header-brand" />
+          <div className="header-actions">
+            {bookingItem && (
+              <NavLink
+                to={bookingItem.to}
+                className={({ isActive }) =>
+                  `header-booking-button ${
+                    isActive ? 'is-active' : ''
+                  }`
+                }
+              >
+                Book a Session
+              </NavLink>
+            )}
 
-          <nav className="site-nav site-nav--right" aria-label="Secondary navigation">
-            {right.map(renderLink)}
-          </nav>
-
-          <button
-            className={`menu-toggle ${open ? 'is-open' : ''}`}
-            type="button"
-            aria-expanded={open}
-            aria-controls="mobile-menu"
-            aria-label={open ? 'Close menu' : 'Open menu'}
-            onClick={() => setOpen((value) => !value)}
-          >
-            <span />
-            <span />
-            <span />
-          </button>
+            <button
+              type="button"
+              className={`menu-toggle ${menuOpen ? 'is-open' : ''}`}
+              aria-label={
+                menuOpen ? 'Close navigation menu' : 'Open navigation menu'
+              }
+              aria-expanded={menuOpen}
+              aria-controls="mobile-navigation"
+              onClick={() => setMenuOpen((current) => !current)}
+            >
+              <span />
+              <span />
+              <span />
+            </button>
+          </div>
         </div>
       </div>
 
-      <nav id="mobile-menu" className={`mobile-menu ${open ? 'is-open' : ''}`} aria-label="Mobile navigation">
-        <div className="shell mobile-menu__inner">{navItems.map(renderLink)}</div>
+      <nav
+        id="mobile-navigation"
+        className={`mobile-navigation ${
+          menuOpen ? 'is-open' : ''
+        }`}
+        aria-label="Mobile navigation"
+      >
+        <div className="shell mobile-navigation__inner">
+          {primaryNavigation.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.to === '/'}
+              className={({ isActive }) =>
+                `mobile-navigation__link ${
+                  isActive ? 'is-active' : ''
+                }`
+              }
+            >
+              {item.label}
+            </NavLink>
+          ))}
+
+          {bookingItem && (
+            <NavLink
+              to={bookingItem.to}
+              className="mobile-navigation__booking"
+            >
+              Book Your Session
+            </NavLink>
+          )}
+
+          <div className="mobile-navigation__socials">
+            <a
+              href="https://www.facebook.com/"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Facebook"
+            >
+              <FacebookIcon />
+            </a>
+
+            <a
+              href="https://www.instagram.com/"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Instagram"
+            >
+              <InstagramIcon />
+            </a>
+          </div>
+        </div>
       </nav>
     </header>
   );

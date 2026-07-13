@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import diamondPhysiqueLogo from '../assets/images/High-Res-Diamond-Animation-Logo-1.webp';
 
 type BrandProps = {
   compact?: boolean;
@@ -12,12 +13,11 @@ export function Brand({ compact = false, className = '' }: BrandProps) {
       className={`brand ${compact ? 'brand--compact' : ''} ${className}`.trim()}
       aria-label="Diamond Physique Ocala home"
     >
-      <span className="brand__diamond" aria-hidden="true">◆</span>
-      <span className="brand__copy">
-        <span className="brand__diamond-word">Diamond</span>
-        <span className="brand__physique-word">Physique</span>
-        <span className="brand__ocala-word">Ocala</span>
-      </span>
+      <img
+        src={diamondPhysiqueLogo}
+        alt="Diamond Physique Ocala"
+        className="brand__logo"
+      />
     </Link>
   );
 }
